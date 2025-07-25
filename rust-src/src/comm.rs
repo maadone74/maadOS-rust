@@ -2,40 +2,89 @@
 
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
+use tokio::io::{AsyncReadExt, AsyncWriteExt, Result};
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 
-pub struct Interactive {
-    pub stream: TcpStream,
+const MAX_TEXT: usize = 2048;
+const MESSAGE_BUF_SIZE: usize = 2048;
+
+pub struct Connection {
+    pub stream: Option<TcpStream>,
     pub addr: SocketAddr,
     pub last_time: i64,
-    // ... other fields from the C struct
+    pub prompt: String,
+    pub text: [u8; MAX_TEXT],
+    pub text_end: usize,
+    pub text_start: usize,
+    pub message_buf: [u8; MESSAGE_BUF_SIZE],
+    pub message_producer: usize,
+    pub message_consumer: usize,
+    pub message_length: usize,
+    pub iflags: u32,
 }
 
-impl Interactive {
-    pub fn new(stream: TcpStream, addr: SocketAddr) -> Self {
-        Interactive {
-            stream,
+impl Connection {
+    pub fn new(stream: TcpStream) -> Self {
+        let addr = stream.peer_addr().unwrap();
+        Connection {
+            stream: Some(stream),
             addr,
             last_time: chrono::Utc::now().timestamp(),
-            // ... initialize other fields
+            prompt: "> ".to_string(),
+            text: [0; MAX_TEXT],
+            text_end: 0,
+            text_start: 0,
+            message_buf: [0; MESSAGE_BUF_SIZE],
+            message_producer: 0,
+            message_consumer: 0,
+            message_length: 0,
+            iflags: 0,
         }
     }
 }
 
-pub fn get_message(buf: &mut String) -> bool {
-    // This is a placeholder for the get_message function.
-    // In a real implementation, it would read a message from the network
-    // and store it in the buffer.
-    false
+pub struct Shared {
+    pub connections: Mutex<HashMap<SocketAddr, Arc<Mutex<Connection>>>>,
 }
 
-pub fn add_message(msg: &str) {
-    // This is a placeholder for the add_message function.
-    // In a real implementation, it would send a message to the network.
-    println!("Sending message: {}", msg);
+impl Shared {
+    pub fn new() -> Self {
+        Shared {
+            connections: Mutex::new(HashMap::new()),
+        }
+    }
 }
 
-pub fn send_message(msg: &str, to: &mut Interactive) {
-    // This is a placeholder for the send_message function.
-    // In a real implementation, it would send a message to a specific user.
-    println!("Sending message to {}: {}", to.addr, msg);
+pub async fn handle_connection(
+    stream: TcpStream,
+    shared: Arc<Shared>,
+    addr: SocketAddr,
+) {
+    let conn_arc = Arc::new(Mutex::new(Connection::new(stream)));
+    shared.connections.lock().unwrap().insert(addr, conn_arc.clone());
+
+    let mut stream = conn_arc.lock().unwrap().stream.take().unwrap();
+
+    loop {
+        let mut buf = [0; 1024];
+        match stream.read(&mut buf).await {
+            Ok(0) => {
+                // Connection closed
+                break;
+            }
+            Ok(n) => {
+                // Process input
+                let msg = String::from_utf8_lossy(&buf[..n]).to_string();
+                println!("Received from {}: {}", addr, msg);
+                stream.write_all(&buf[..n]).await.unwrap();
+            }
+            Err(e) => {
+                eprintln!("Error reading from {}: {}", addr, e);
+                break;
+            }
+        }
+    }
+
+    shared.connections.lock().unwrap().remove(&addr);
 }

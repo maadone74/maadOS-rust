@@ -1,7 +1,8 @@
 use tokio::net::{TcpListener, TcpStream};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use std::net::{SocketAddr, ToSocketAddrs};
+use std::net::{SocketAddr, ToSocketAddrs, IpAddr};
 use std::io;
+use dns_lookup::lookup_addr;
 
 const MAX_CONNS: usize = 256;
 const IN_BUF_SIZE: usize = 1024;
@@ -108,13 +109,10 @@ async fn ip_by_name(data: &[u8]) -> String {
 
 async fn name_by_ip(data: &[u8]) -> String {
     let ip_str = String::from_utf8_lossy(data);
-    match ip_str.parse::<SocketAddr>() {
-        Ok(addr) => {
-            let host = tokio::net::lookup_host(addr).await;
-            if let Ok(mut hosts) = host {
-                if let Some(host) = hosts.next() {
-                    return format!("{} {}\n", ip_str, host.hostname());
-                }
+    match ip_str.parse::<IpAddr>() {
+        Ok(ip) => {
+            if let Ok(hostname) = lookup_addr(&ip) {
+                return format!("{} {}\n", ip_str, hostname);
             }
             format!("{} 0\n", ip_str)
         }
