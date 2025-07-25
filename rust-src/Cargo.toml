@@ -1,0 +1,15 @@
+[package]
+name = "rust_mud_driver"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "rust_mud_driver"
+path = "src/main.rs"
+
+[lib]
+name = "rust_mud_driver"
+path = "src/lib.rs"
