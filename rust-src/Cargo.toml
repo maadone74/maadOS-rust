@@ -9,6 +9,9 @@ tokio-stream = "0.1"
 chrono = "0.4"
 dns-lookup = "1.0"
 lazy_static = "1.4.0"
+log = "0.4"
+env_logger = "0.9"
+bcrypt = "0.10"
 
 [[bin]]
 name = "rust_mud_driver"
@@ -17,3 +20,7 @@ path = "src/main.rs"
 [lib]
 name = "rust_mud_driver"
 path = "src/lib.rs"
+
+[[test]]
+name = "login"
+path = "tests/login.rs"

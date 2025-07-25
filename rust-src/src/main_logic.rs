@@ -3,12 +3,14 @@ use crate::comm;
 use std::sync::Arc;
 use tokio::net::TcpListener;
 use tokio::time::{self, Duration};
+use log::{info, error};
 
 use crate::globals::GLOBALS;
 
 #[tokio::main]
 pub async fn run() {
-    println!("MUD server starting up...");
+    env_logger::init();
+    info!("MUD server starting up...");
 
     // Initialize global variables
     {
