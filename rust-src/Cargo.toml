@@ -8,6 +8,7 @@ tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1"
 chrono = "0.4"
 dns-lookup = "1.0"
+lazy_static = "1.4.0"
 
 [[bin]]
 name = "rust_mud_driver"

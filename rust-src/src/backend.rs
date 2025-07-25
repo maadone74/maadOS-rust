@@ -1,9 +1,6 @@
 // backend.rs
 
-use crate::comm::{self, Shared};
-use std::sync::{Arc, Mutex};
-use tokio::net::TcpListener;
-use tokio::time::{self, Duration};
+use std::sync::Mutex;
 
 pub struct Heartbeat {
     // For now, we'll just use a simple vector of connection addresses
@@ -50,32 +47,3 @@ impl Swap {
     }
 }
 
-pub async fn backend() {
-    let listener = TcpListener::bind("127.0.0.1:6666").await.unwrap();
-    let shared = Arc::new(Shared::new());
-    let heartbeat = Arc::new(Heartbeat::new());
-    let swap = Arc::new(Swap::new());
-
-    let mut hb_interval = time::interval(Duration::from_secs(1));
-    let mut swap_interval = time::interval(Duration::from_secs(60));
-
-    loop {
-        tokio::select! {
-            Ok((socket, addr)) = listener.accept() => {
-                let shared = shared.clone();
-                let heartbeat = heartbeat.clone();
-                tokio::spawn(async move {
-                    heartbeat.set_heartbeat(addr, true);
-                    comm::handle_connection(socket, shared, addr).await;
-                    heartbeat.set_heartbeat(addr, false);
-                });
-            }
-            _ = hb_interval.tick() => {
-                heartbeat.call_heartbeat();
-            }
-            _ = swap_interval.tick() => {
-                swap.look_for_objects_to_swap();
-            }
-        }
-    }
-}

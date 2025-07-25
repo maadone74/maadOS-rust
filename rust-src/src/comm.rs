@@ -2,7 +2,7 @@
 
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
-use tokio::io::{AsyncReadExt, AsyncWriteExt, Result};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
