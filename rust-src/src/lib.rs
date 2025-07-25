@@ -2,3 +2,4 @@
 pub mod comm;
 pub mod backend;
 pub mod globals;
+pub mod user;
