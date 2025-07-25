@@ -1,8 +1,9 @@
 mod addr_server;
 mod backend;
 mod comm;
+mod main_logic;
+mod globals;
 
-#[tokio::main]
-async fn main() {
-    backend::backend().await;
+fn main() {
+    main_logic::run();
 }
