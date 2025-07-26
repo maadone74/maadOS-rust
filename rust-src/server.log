@@ -1,0 +1,149 @@
+   Compiling rust_mud_driver v0.1.0 (/app/rust-src)
+warning: unused import: `error`
+ --> src/main_logic.rs:6:17
+  |
+6 | use log::{info, error};
+  |                 ^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: constant `MAX_CONNS` is never used
+ --> src/addr_server.rs:7:7
+  |
+7 | const MAX_CONNS: usize = 256;
+  |       ^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` on by default
+
+warning: constant `IN_BUF_SIZE` is never used
+ --> src/addr_server.rs:8:7
+  |
+8 | const IN_BUF_SIZE: usize = 1024;
+  |       ^^^^^^^^^^^
+
+warning: constant `OUT_BUF_SIZE` is never used
+ --> src/addr_server.rs:9:7
+  |
+9 | const OUT_BUF_SIZE: usize = 80;
+  |       ^^^^^^^^^^^^
+
+warning: enum `ConnectionState` is never used
+  --> src/addr_server.rs:11:6
+   |
+11 | enum ConnectionState {
+   |      ^^^^^^^^^^^^^^^
+
+warning: struct `Connection` is never constructed
+  --> src/addr_server.rs:16:8
+   |
+16 | struct Connection {
+   |        ^^^^^^^^^^
+
+warning: associated function `new` is never used
+  --> src/addr_server.rs:26:8
+   |
+25 | impl Connection {
+   | --------------- associated function in this implementation
+26 |     fn new() -> Self {
+   |        ^^^
+
+warning: function `start_addr_server` is never used
+  --> src/addr_server.rs:38:14
+   |
+38 | pub async fn start_addr_server(port: u16, ip_address: &str) -> io::Result<()> {
+   |              ^^^^^^^^^^^^^^^^^
+
+warning: function `handle_connection` is never used
+  --> src/addr_server.rs:53:10
+   |
+53 | async fn handle_connection(mut stream: TcpStream) -> io::Result<()> {
+   |          ^^^^^^^^^^^^^^^^^
+
+warning: function `parse_message_header` is never used
+  --> src/addr_server.rs:87:4
+   |
+87 | fn parse_message_header(buf: &[u8]) -> (u32, usize) {
+   |    ^^^^^^^^^^^^^^^^^^^^
+
+warning: function `ip_by_name` is never used
+  --> src/addr_server.rs:96:10
+   |
+96 | async fn ip_by_name(data: &[u8]) -> String {
+   |          ^^^^^^^^^^
+
+warning: function `name_by_ip` is never used
+   --> src/addr_server.rs:110:10
+    |
+110 | async fn name_by_ip(data: &[u8]) -> String {
+    |          ^^^^^^^^^^
+
+warning: multiple fields are never read
+  --> src/comm.rs:16:9
+   |
+14 | pub struct Connection {
+   |            ---------- fields in this struct
+15 |     pub stream: Option<TcpStream>,
+16 |     pub addr: SocketAddr,
+   |         ^^^^
+17 |     pub last_time: i64,
+   |         ^^^^^^^^^
+18 |     pub prompt: String,
+   |         ^^^^^^
+19 |     pub text: [u8; MAX_TEXT],
+   |         ^^^^
+20 |     pub text_end: usize,
+   |         ^^^^^^^^
+21 |     pub text_start: usize,
+   |         ^^^^^^^^^^
+22 |     pub message_buf: [u8; MESSAGE_BUF_SIZE],
+   |         ^^^^^^^^^^^
+23 |     pub message_producer: usize,
+   |         ^^^^^^^^^^^^^^^^
+24 |     pub message_consumer: usize,
+   |         ^^^^^^^^^^^^^^^^
+25 |     pub message_length: usize,
+   |         ^^^^^^^^^^^^^^
+26 |     pub iflags: u32,
+   |         ^^^^^^
+
+warning: multiple fields are never read
+  --> src/globals.rs:5:9
+   |
+4  | pub struct GlobalState {
+   |            ----------- fields in this struct
+5  |     pub e_flag: bool,
+   |         ^^^^^^
+6  |     pub t_flag: bool,
+   |         ^^^^^^
+7  |     pub comp_flag: bool,
+   |         ^^^^^^^^^
+8  |     pub max_cost: i32,
+   |         ^^^^^^^^
+9  |     pub time_to_swap: i32,
+   |         ^^^^^^^^^^^^
+10 |     pub time_to_clean_up: i32,
+   |         ^^^^^^^^^^^^^^^^
+11 |     pub default_fail_message: Option<String>,
+   |         ^^^^^^^^^^^^^^^^^^^^
+12 |     pub boot_time: i64,
+13 |     pub max_array_size: i32,
+   |         ^^^^^^^^^^^^^^
+14 |     pub max_buffer_size: i32,
+   |         ^^^^^^^^^^^^^^^
+15 |     pub max_string_length: i32,
+   |         ^^^^^^^^^^^^^^^^^
+16 |     pub reserved_size: i32,
+   |         ^^^^^^^^^^^^^
+17 |     pub reserved_area: Option<Vec<u8>>,
+   |         ^^^^^^^^^^^^^
+18 |     pub mud_lib: Option<String>,
+   |         ^^^^^^^
+
+warning: field `login_state` is never read
+  --> src/user.rs:13:9
+   |
+10 | pub struct User {
+   |            ---- field in this struct
+...
+13 |     pub login_state: LoginState,
+   |         ^^^^^^^^^^^

@@ -105,6 +105,7 @@ pub async fn handle_connection(
                     }
                     LoginState::EnteringPassword => {
                         if let Some(user) = &current_user {
+                            // Password verification should be done here, after the user enters the password.
                             if user.verify_password(&msg) {
                                 login_state = LoginState::LoggedIn;
                                 stream.write_all(b"Login successful!\n").await.unwrap();
@@ -116,9 +117,8 @@ pub async fn handle_connection(
                                 }
                             } else {
                                 warn!("Failed login attempt for user: {}", user.username);
+                                // Ask for password again, but don't reset the username
                                 stream.write_all(b"Invalid password. Please try again: ").await.unwrap();
-                                login_state = LoginState::EnteringUsername;
-                                current_user = None;
                             }
                         }
                     }
